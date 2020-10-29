@@ -1,7 +1,7 @@
 # Practica00-ConsumoDeAPIEnLaNube
 
 #### Identificar gráficamente la arquitectura y el patrón de diseño de la aplicación a desarrollar
-![](images/image--002.jpg)
+![](images/image--002.png)
 
 #### Generar una llave para consumir los servicios web de la API (opcional, depende de la API seleccionada).
 
