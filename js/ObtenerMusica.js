@@ -5,10 +5,12 @@ var nombre_original = "";
 var paginas = 0;
 var pagina_actual = 1;
 var bandera = null;
+var desde = 0;
+var hasta = 5;
 
 function getPeliculasID(id) {
     let url = 'https://www.omdbapi.com/?apikey=533bb6&i=' + id;
-    hacerPeticionAjax(url, getPeliculas);
+    hacerPeticionAjax(url, getMusica);
     document.getElementById('footer').style="visibility: hidden";
     document.getElementById('mi_body').style.backgroundImage = 'none';
 }
@@ -19,10 +21,8 @@ function getMusicaNombre() {
     bandera = false;
     nombre_original = document.getElementById('txtNombre').value;
     nombre = nombre_original.trim().split(' ').join('%20');
-    let url = 'https://api.musixmatch.com/ws/1.1/track.search?format=json&callback=callback&q_track='+nombre+'&quorum_factor=1&apikey=e5682fb951789680203cb310508bf8af'
-        
-    //let url = 'https://www.omdbapi.com/?apikey=533bb6&s=' + nombre + '&page=' + 1;
-    hacerPeticionAjax(url, getPeliculas);
+    let url = 'https://api.musixmatch.com/ws/1.1/track.search?format=json&q_track='+nombre+'&quorum_factor=1&apikey=5cb44a93a8cda287b6cb4d7c7498dda3&page=' + 1;
+    hacerPeticionAjax(url, getMusica);
 }
 
 
@@ -31,11 +31,10 @@ function getMusicaNombre() {
 function getPeliculasNombPagina(pagina) {
     pagina_actual = pagina;
     if(pagina_actual > paginas){
-        createModal("Error", "Ha intentado abrir un número de página que no existe, existen "+ paginas + " páginas disponibles \n" +
-            "por favor ingrese un valor valido.");
+        createModal("Error", "Ha intentado abrir un número de página que no existe, existen "+ paginas + " páginas disponibles \n" + "por favor ingrese un valor valido.");
     }else {
-        let url = 'https://www.omdbapi.com/?apikey=533bb6&s=' + nombre + '&page=' + pagina;
-        hacerPeticionAjax(url, getPeliculas);
+        let url = 'https://api.musixmatch.com/ws/1.1/track.search?format=json&q_track='+nombre+'&quorum_factor=1&apikey=5cb44a93a8cda287b6cb4d7c7498dda3&page=' + 1;
+        hacerPeticionAjax(url, getMusica);
     }
 }
 
@@ -45,28 +44,35 @@ function createModal(titulo, mensaje){
     $('#myModal').modal();
 }
 
-function getPeliculas(data) {
-    if (data.Response == "True") {
-        let resultados = parseInt(data.totalResults);
-        paginas = Math.ceil(resultados / 10);
+function getMusica(data) {
+    //if (data.Response == "True") {
+        console.log("Estoy en get music");
+        let resultados = parseInt(data.message.body.track_list.length);
+        paginas = Math.ceil(resultados / 5);
+
         if(!bandera)
             createModal(nombre_original, "Se han obtenido "+ resultados + " resultados" +
             " y se han creado " + paginas + " paginas.");
         bandera=true;
         search = [];
-        if (data.Title === undefined) {
-            for (let i = 0; i < data.Search.length; i++) {
-                search.push(data.Search[i]);
-            }
-        } else {
-            search.push(data);
-            cargarTabla(search);
+
+
+        //if (data.Title === undefined) {
+       
+        //}// else {
+           // search.push(data);
+            //cargarTabla(search);
+        //}
+
+        for (let i = 0; i < data.message.body.track_list.length; i++) {
+            search.push(data.message.body.track_list[i]);
         }
+        
         cargarTabla(search);
-    } else {
-        createModal("ERROR", "Se ha producido un error al buscar la pelicula," +
-            " por favor verifica que el nombre sea correcto.");
-    }
+    //} else {
+        //createModal("ERROR", "Se ha producido un error al buscar la pelicula," +
+        //    " por favor verifica que el nombre sea correcto.");
+    //}
     actualizarBotones(-1);
 }
 
@@ -74,65 +80,100 @@ function getPeliculas(data) {
 
 
 function hacerPeticionAjax(url, callback) {
-    let ajax;
-
-    if (window.XMLHttpRequest) {
-        // code for IE7+, Firefox, Chrome, Opera, Safari
-        ajax = new XMLHttpRequest();
-    } else {
-        // code for IE6, IE5
-        ajax = new ActiveXObject("Microsoft.XMLHTTP");
-    }
-
-
-    document.getElementById("informacion").innerHTML = url;
+    
+    let ajax = new XMLHttpRequest();
     ajax.open('GET', url, true);
     ajax.send();
+    
+    ajax.onreadystatechange = function () {
+        if (ajax.readyState === 4 && ajax.status === 200) {
 
-    document.getElementById("informacion").innerHTML = ajax.responseText;
-            
+
+            let responseJSON = JSON.parse(ajax.responseText);
+            console.log(responseJSON.message.body);
+
+            /*
+
+            for (var  i = 0; i < responseJSON.message.body.track_list.length; i++) {
+                
+                document.getElementById("informacion").innerHTML += responseJSON.message.body.track_list[i].track.track_id+"<br>";
+                
+                document.getElementById("informacion").innerHTML += responseJSON.message.body.track_list[i].track.track_name+"<br>";
+
+                document.getElementById("informacion").innerHTML += responseJSON.message.body.track_list[i].track.album_name+"<br>";
+
+                document.getElementById("informacion").innerHTML += responseJSON.message.body.track_list[i].track.artist_name+"<br>";
+                
+                //document.getElementById("informacion").innerHTML += responseJSON.message.body.track_list[i].track.primary_genres.music_genre_list[0].music_genre.music_genre_name+"<br>";
+
+                document.getElementById("informacion").innerHTML += responseJSON.message.body.track_list[i].track.updated_time+"<br>";
+                
+            }
+
+            */
+
+            //document.getElementById("informacion").innerHTML = responseJSON;
+            callback(responseJSON);
+        }
+    };
     
 
     
 }
 
 
+
 function cargarTabla(datos) {
-    let keys = Object.keys(datos[0]);
-    if (datos.length > 1) {
-        keys.push("Más Detalles");
-    } else {
-        keys.pop();
-    }
+    let keys = ['Nombre de la Cancion', 'Album', 'Artista', 'Fecha de Lanzamiento', 'Letra Disponible'];
+
+    console.log("keys "+keys);
+    //console.log("datos primero "+datos[0].track.track_name);
+
+    
     let table = "";
     for (let i = 0; i < keys.length; i++) {
         table += "<th>" + keys[i] + "</th>";
     }
-    for (let i = 0; i < datos.length; i++) {
+
+    for (let i = desde; i < hasta-1; i++) {
         let dt = datos[i];
         table = table + "<tr>";
+
+        console.log("dat "+dt.track.track_name);
+
+
         for (let j = 0; j < keys.length; j++) {
-            if (keys[j] == "Ratings") {
-                let ratings = dt[keys[j]];
-                values = [];
-                for (let k = 0; k < ratings.length; k++) {
-                    values.push("->" + ratings[i].Source + '<->' + ratings[i].Value + "<-");
+            
+            if (keys[j] == "Nombre de la Cancion") {
+                let nameSong = dt.track.track_name;
+                
+                table += "<td>" + nameSong.toString() + "</td>";
+            
+            } else if (keys[j] == "Album") {
+
+                table += "<td>" + dt.track.album_name + "</td>";
+
+            } else if (keys[j] === "Artista") {
+                    
+                        table += "<td>"+dt.track.artist_name+"</td>";
+                
+            } else if (keys[j] == "Fecha de Lanzamiento") {
+                table += "<td>"  + dt.track.updated_time +  "</td>";
+            
+            }else if (keys[j] == "Letra Disponible") {
+                if (dt.track.has_lyrics == 0) {
+                    table += "<td>Existe Letra Disponible</td>";     
+                }else{
+                    table += "<td>No Existe Letra Disponible</td>";
                 }
-                table += "<td>" + values.toString() + "</td>";
-            } else if (keys[j] == "Poster") {
-                if (dt[keys[j]] === "N/A") {
-                    table += "<td><img alt='img' class='thumbnail' src=https://www.octoparse.com/images/404_logo.gif style='width:150px;height:250px;'></td>";
-                } else
-                    table += "<td><img alt='img' class='thumbnail' src=" + dt[keys[j]] + " style='width:150px;height:250px;'></td>";
-            } else if (keys[j] == "Más Detalles") {
-                table += "<td><input type='button' class='input_button' onclick='getPeliculasID(this.id)' value='Más Detalles' id=" + dt["imdbID"] + "></td>";
-            } else {
-                table += "<td>" + dt[keys[j]] + "</td>";
+               
             }
         }
         table = table + "</tr>";
     }
+    
     document.getElementById('peliculas').innerHTML = table;
+    
 }
 
 function cargarUltimoIndex() {
@@ -140,6 +181,11 @@ function cargarUltimoIndex() {
 }
 
 function regresarUnaPelicula() {
+    hasta = desde;
+    desde = Math.ceil(desde - 5);
+    
+    console.log("Regresar: desde = "+desde+" hasta "+hasta)
+
     if (actualizarBotones(1) === 0) {
         pagina_actual = parseInt(pagina_actual) - 1;
         getPeliculasNombPagina(pagina_actual);
@@ -147,9 +193,14 @@ function regresarUnaPelicula() {
 }
 
 function aumentarUnaPelicula() {
+    desde = hasta; 
+    hasta =  Math.ceil(desde * paginas);
+
+    console.log("Subir = "+desde+" hasta "+hasta)
     if (actualizarBotones(2) === 0) {
         pagina_actual = parseInt(pagina_actual) + 1;
         getPeliculasNombPagina(pagina_actual);
+         
     }
 }
 
