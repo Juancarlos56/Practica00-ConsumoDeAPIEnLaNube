@@ -6,7 +6,7 @@
         Information about Indie Rock page
         Author: Juan Carlos Barrera Barrera  
         Date:  04/04/2020 
-        Filename: contactos.html 
+        Filename: index.html 
     -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no,  initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
@@ -32,10 +32,10 @@ que aparecerá en la página web-->
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title" id="nombre_pelicula"></h4>
+                        <h4 class="modal-title" id="nombre_Cancion"></h4>
                     </div>
                     <div class="modal-body">
-                        <p id="cantidad_peliculas"></p>
+                        <p id="cantidad_Canciones"></p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar Mensaje</button>
@@ -52,46 +52,36 @@ que aparecerá en la página web-->
     <form class="example" onsubmit="return false">
         <h4>Ingrese el nombre de la canción: </h4>
         <input id="txtNombre" type="text" name="search">
-        <button onclick="getMusicaNombre()"><i class="fa fa-search"></i></button><br>
+        <button onclick="getMusicaNombre()"><i class="fa fa-search">BUSCAR</i></button><br>
     </form>
     
 
     <script>
         var placeholderText = [
-            "¿Qué tipo de musica te gustaria buscar?",
-            "ROCK ALTERNATIVO?",
-            "POP?",
-            "INDIE ROCK?"
+            "Ingrese el nombre de la canción",
+            "Money",
+            "Seeing Stars",
+            "Golden"
         ];
         $('#txtNombre').placeholderTypewriter({text: placeholderText});
     </script>
     
     <div class="div_container">
-        <table id="peliculas" class="">
+        <table id="canciones" class="">
         </table>
     </div>    
 
     <div class="separador"> </div>
     
-    <!--
-    <div id="informacion"><b>Datos de la persona</b></div>
-    -->
-        
     
     <footer id="footer" style="position: absolute; width: fit-content; margin-left: auto; visibility: hidden">
         <div class="container">
             <div class="input-group pagination">
                 <div class="input-group-btn">
-                    <button class="btn btn-default" type="button" onclick="getPeliculasNombPagina('1')">&lt;&lt;</button>
-                    <button class="btn btn-default" type="button" id="btn_regresar" onclick="regresarUnaPelicula()">&lt;</button>
+                    <button class="btn btn-default" type="button" id="btn_regresar" onclick="regresarUnaCancion()">&lt;</button>
+                    <button class="btn btn-default" type="button" id="btn_avanzar" onclick="aumentarUnaCancion()">&gt;</button>
                 </div>
-                <div class="input-group-btn">
-                    <input class="form-control" type="text" id="idex_seleccionado" style="width: 50px;" value="1">
-                </div>
-                <div class="input-group-btn">
-                    <button class="btn btn-primary" type="button" onclick="getPeliculasNombPagina(document.getElementById('idex_seleccionado').value)">Cargar</button>
-                    <button class="btn btn-default" type="button" id="btn_avanzar" onclick="aumentarUnaPelicula()">&gt;</button>
-                    <button class="btn btn-default" type="button" onclick="cargarUltimoIndex()">&gt;&gt;</button>
+                                        
                 </div>
             </div>
         </div>

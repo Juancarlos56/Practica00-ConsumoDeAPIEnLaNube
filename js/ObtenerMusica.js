@@ -8,7 +8,7 @@ var bandera = null;
 var desde = 0;
 var hasta = 5;
 
-function getPeliculasID(id) {
+function getCancionesID(id) {
     let url = 'https://www.omdbapi.com/?apikey=533bb6&i=' + id;
     hacerPeticionAjax(url, getMusica);
     document.getElementById('footer').style="visibility: hidden";
@@ -28,10 +28,10 @@ function getMusicaNombre() {
 
 
 
-function getPeliculasNombPagina(pagina) {
+function getCancionesNombPagina(pagina) {
     pagina_actual = pagina;
     if(pagina_actual > paginas){
-        createModal("Error", "Ha intentado abrir un número de página que no existe, existen "+ paginas + " páginas disponibles \n" + "por favor ingrese un valor valido.");
+        createModal("Error", "Pagina no existe "+ paginas + " páginas disponibles \n" + "por favor ingrese un valor valido.");
     }else {
         let url = 'https://api.musixmatch.com/ws/1.1/track.search?format=json&q_track='+nombre+'&quorum_factor=1&apikey=5cb44a93a8cda287b6cb4d7c7498dda3&page=' + 1;
         hacerPeticionAjax(url, getMusica);
@@ -39,8 +39,8 @@ function getPeliculasNombPagina(pagina) {
 }
 
 function createModal(titulo, mensaje){
-    document.getElementById('nombre_pelicula').innerText = titulo;
-    document.getElementById('cantidad_peliculas').innerText = mensaje;
+    document.getElementById('nombre_Cancion').innerText = titulo;
+    document.getElementById('cantidad_Canciones').innerText = mensaje;
     $('#myModal').modal();
 }
 
@@ -51,8 +51,8 @@ function getMusica(data) {
         paginas = Math.ceil(resultados / 5);
 
         if(!bandera)
-            createModal(nombre_original, "Se han obtenido "+ resultados + " resultados" +
-            " y se han creado " + paginas + " paginas.");
+            createModal(nombre_original, "Se han encontrado "+ resultados + " posibles resultados" +
+            " y se creo " + paginas + " paginas.");
         bandera=true;
         search = [];
 
@@ -172,15 +172,15 @@ function cargarTabla(datos) {
         table = table + "</tr>";
     }
     
-    document.getElementById('peliculas').innerHTML = table;
+    document.getElementById('canciones').innerHTML = table;
     
 }
 
 function cargarUltimoIndex() {
-    getPeliculasNombPagina(paginas);
+    getCancionesNombPagina(paginas);
 }
 
-function regresarUnaPelicula() {
+function regresarUnaCancion() {
     hasta = desde;
     desde = Math.ceil(desde - 5);
     
@@ -188,18 +188,18 @@ function regresarUnaPelicula() {
 
     if (actualizarBotones(1) === 0) {
         pagina_actual = parseInt(pagina_actual) - 1;
-        getPeliculasNombPagina(pagina_actual);
+        getCancionesNombPagina(pagina_actual);
     }
 }
 
-function aumentarUnaPelicula() {
+function aumentarUnaCancion() {
     desde = hasta; 
     hasta =  Math.ceil(desde * paginas);
 
     console.log("Subir = "+desde+" hasta "+hasta)
     if (actualizarBotones(2) === 0) {
         pagina_actual = parseInt(pagina_actual) + 1;
-        getPeliculasNombPagina(pagina_actual);
+        getCancionesNombPagina(pagina_actual);
          
     }
 }
