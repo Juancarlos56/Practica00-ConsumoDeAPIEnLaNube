@@ -16,7 +16,7 @@ function getCancionesID(id) {
 }
 
 function getMusicaNombre() {
-    //document.getElementById('mi_body').style.backgroundImage = "url('https://images2.alphacoders.com/228/thumb-1920-228760.jpg')";
+    document.getElementById('mi_body').style.backgroundImage = "url('https://www.wallpapertip.com/wmimgs/40-405583_high-resolution-white-background-hd.jpg')";
     document.getElementById('footer').style="visibility: visible";
     bandera = false;
     nombre_original = document.getElementById('txtNombre').value;
